@@ -6,21 +6,19 @@ get_image_name(){
 }
 
 get_image_tag(){
-  local image_tag=$(grep "image:" docker-compose.yml | awk -F':' '{print $3}' | tr -d '[:space:]')
+  local image_tag=$(grep "image:" docker-compose.yml | awk -F':' '{print $3}' | awk '{print $1}')
   echo "$image_tag"
 }
 
 update_environment(){
   local image_name=$(get_image_name)
   local image_tag=$(get_image_tag)
-  docker pull "$image_name:$image_tag"
+  docker pull "$image_name:$image_tag" # pul img the latest change
 
   # stop and remove the existing containers
   docker-compose down
 
   docker image rm "$image_name:$image_tag" # del img with old tag
-  docker pull "$image_name:$image_tag" # pul img with new tag
-
   docker-compose up -d
 }
 
@@ -54,17 +52,20 @@ schedule_night(){
 }
 
 monitor_changes(){
+  local previous_name=$(get_image_name)
   local previous_tag=$(get_image_tag)
 
     while true; do
       local latest_tag=$(get_image_tag)
+      local latest_name=$(get_image_name)
 
-      if [[ "$latest_tag" != "$previous_tag" ]]; then
-        echo ""
-        echo "New image tag available: $latest_tag"
+      if [[ "$latest_name" != "$previous_name" || "$latest_tag" != "$previous_tag" ]]; then
+        echo -e " "
+        echo "Update available: $latest_name:$latest_tag"
         echo "Update environment..."
         update_environment
-        previous_tag="$latest_tag"
+        previous_tag=$(get_image_tag)
+        previous_name=$(get_image_name)
       fi
     done
 }
