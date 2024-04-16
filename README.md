@@ -13,7 +13,11 @@ It continuously monitors for changes in the specified Docker image tag and  upda
     ```shell
     chmod u+x script_name.sh
     ```
-5. Execute the script
+5. Install `inotifywait`
+   ```shell
+   apt-get install inotify-tools
+   ```
+6. Execute the script
     ```shell
     ./script_name.sh
     ```
@@ -32,6 +36,7 @@ It will then continuously monitor for changes in the image tag every 60 seconds(
     docker tag your_image:latest your_image:new_tag(e.g 3.14)
     ```
 4. Return to the first terminal window and monitor the result.
+
 
 # Note
 Your docker-compose.yml and Dockerfiles should be in the same directory as the script file.

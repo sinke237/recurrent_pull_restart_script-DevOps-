@@ -13,7 +13,7 @@ get_image_tag(){
 update_environment(){
   local image_name=$(get_image_name)
   local image_tag=$(get_image_tag)
-  docker pull "$image_name:$IMAGE_TAG"
+  docker pull "$image_name:$image_tag"
 
   # stop and remove the existing containers
   docker-compose down
@@ -46,28 +46,26 @@ remove_cron_job(){
 }
 
 schedule_day(){
-  add_cron_job "* * * * * ./environmentUpdate.sh"
+  add_cron_job "* * * * * /bin/bash -c 'cd $(pwd) && ./environmentUpdate.sh"
 }
 
 schedule_night(){
-  add_cron_job "0 0 * * * ./environmentUpdate.sh"
+  add_cron_job "0 0 * * * /bin/bash -c 'cd $(pwd) && ./environmentUpdate.sh"
 }
 
 monitor_changes(){
-  previous_tag=""
+  local previous_tag=$(get_image_tag)
 
     while true; do
-      local repository=$(get_image_name)
-      local latest_tag=$(docker image ls "$repository" --format "{{.Tag}}")
+      local latest_tag=$(get_image_tag)
 
-      if [[ "$latest_tag" != "$IMAGE_TAG" && "$latest_tag" != "$previous_tag" ]]; then
-          echo "New image tag available: $latest_tag"
-          echo "Update environment..."
-          IMAGE_TAG="$latest_tag"
-          update_environment
-          previous_tag="$latest_tag"
+      if [[ "$latest_tag" != "$previous_tag" ]]; then
+        echo ""
+        echo "New image tag available: $latest_tag"
+        echo "Update environment..."
+        update_environment
+        previous_tag="$latest_tag"
       fi
-      sleep 60 # sleep for a while before checking again...
     done
 }
 schedule_day
