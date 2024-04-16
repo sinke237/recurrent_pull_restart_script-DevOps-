@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: alpine:latest
+    image: alpine:3.18.6
     user: root
     ports:
       - 80:80

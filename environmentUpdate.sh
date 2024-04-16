@@ -5,12 +5,21 @@ get_image_name(){
   echo "$image_name"
 }
 
+get_image_tag(){
+  local image_tag=$(grep "image:" docker-compose.yml | awk -F':' '{print $3}' | tr -d '[:space:]')
+  echo "$image_tag"
+}
+
 update_environment(){
   local image_name=$(get_image_name)
+  local image_tag=$(get_image_tag)
   docker pull "$image_name:$IMAGE_TAG"
 
   # stop and remove the existing containers
   docker-compose down
+
+  docker image rm "$image_name:$image_tag" # del img with old tag
+  docker pull "$image_name:$image_tag" # pul img with new tag
 
   docker-compose up -d
 }
@@ -22,9 +31,9 @@ if ! grep -q "image: " docker-compose.yml; then
 fi
 
 # check if image is already running
-if ! docker image inspect "$(get_image_name):$IMAGE_TAG" >/dev/null 2>&1; then
-  echo "ERROR: Image '$(get_image_name)' is not running."
-  echo "Pulling '$(get_image_name):$IMAGE_TAG'..."
+if ! docker image inspect "$(get_image_name):$(get_image_tag)" >/dev/null 2>&1; then
+  echo "ERROR: Image '$(get_image_name):$(get_image_tag)' is not running."
+  echo "Pulling '$(get_image_name):$(get_image_tag)'..."
   update_environment
 fi
 
