@@ -6,7 +6,7 @@ get_image_name(){
 }
 
 get_image_tag(){
-  local image_tag=$(grep "image:" docker-compose.yml | awk -F':' '{print $3}' | awk '{print $1}')
+  local image_tag=$(grep "image:" docker-compose.yml | awk -F':' '{print $3}' | awk '{print $NF}')
   echo "$image_tag"
 }
 
