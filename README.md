@@ -13,11 +13,7 @@ It continuously monitors for changes in the specified Docker image tag and  upda
     ```shell
     chmod u+x script_name.sh
     ```
-5. Install `inotifywait`
-   ```shell
-   apt-get install inotify-tools
-   ```
-6. Execute the script
+5. Execute the script
     ```shell
     ./script_name.sh
     ```
@@ -26,16 +22,8 @@ It will then continuously monitor for changes in the image tag every 60 seconds(
 
 # Test the script
 1. Run the script. It will run indefinitely.
-2. Open another terminal window(Ctl+Shift+T), check the current running image tags being used.
-    ```shell
-    docker image ls your_image(alpine in my case)
-    ```
-   Note the tag being used.
-3. Tag a new version of the image
-    ```shell
-    docker tag your_image:latest your_image:new_tag(e.g 3.14)
-    ```
-4. Return to the first terminal window and monitor the result.
+2. Change the images in the docker-compose file
+3. Observe the change in the terminal.
 
 
 # Note
