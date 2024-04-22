@@ -1,8 +1,10 @@
 version: '3'
-
+networks:
+  sk_network:
 services:
   app:
-    image: localhost:5000/sk-nginx:3.0
+    image: sinke-registry:5000/sk-nginx:stable-alpine3.17
+    container_name: app
     ports:
       - 9000:8000  # Map host port 9000 to container port 8000
     # Add other necessary configurations for the app service
@@ -10,18 +12,33 @@ services:
     env_file:
       - .env
 
-  whoiam:
-    image: localhost:5000/sk-redis:2.4
-    ports:
-      - 8081:8080  # Map host port 8081 to container port 8080
-    # Add other necessary configurations for the whoiam service
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    env_file:
-      - .env
+#  whoiam:
+#    image: localhost:5000/sk-redis:7.2.4
+#    container_name: whoiam
+#    ports:
+#      - 8081:8080  # Map host port 8081 to container port 8080
+#    # Add other necessary configurations for the whoiam service
+#    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+#    env_file:
+#      - .env
 
   watchtower:
     image: containrrr/watchtower
+    container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    command: --interval 30
+    command: --interval 30 --debug
     restart: always
+    networks:
+      sk_network:
+    links:
+      - reg:sinke-registry
+
+  reg:
+    image: registry:2
+    container_name: sinke-reg
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      sk_network:

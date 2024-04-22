@@ -18,7 +18,7 @@ I will create a local docker registry and use it to test if watchtower works.
    ```dockerfile
     docker pull mysql:latest
     ```
-3. Alter the tags
+3. Alter the tags ()
     ```dockerfile
     docker tag nginx:latest localhost:5000/my-nginx:2.8
     ```
