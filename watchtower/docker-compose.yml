@@ -1,11 +1,24 @@
 version: '3'
+
 services:
   app:
-    image: node:latest
-    # other configs
+    image: localhost:5000/sk-nginx:3.0
+    ports:
+      - 9000:8000  # Map host port 9000 to container port 8000
+    # Add other necessary configurations for the app service
+    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+    env_file:
+      - .env
+
   whoiam:
-    image: alpine:3.15.0
-    # other configs
+    image: localhost:5000/sk-redis:2.4
+    ports:
+      - 8081:8080  # Map host port 8081 to container port 8080
+    # Add other necessary configurations for the whoiam service
+    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+    env_file:
+      - .env
+
   watchtower:
     image: containrrr/watchtower
     volumes:
