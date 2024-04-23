@@ -3,7 +3,7 @@ networks:
   sk_network:
 services:
   app:
-    image: sinke-registry:5000/sk-nginx:stable-alpine3.17
+    image: sinke-registry:5000/sk-nginx:stable-alpine3.18
     container_name: app
     ports:
       - 9000:8000  # Map host port 9000 to container port 8000
@@ -27,6 +27,13 @@ services:
     container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ~/docker/config.json:/root/.docker/config.json:ro
+    environment:
+      WATCHTOWER_NOTIFICATIONS: email
+      WATCHTOWER_NOTIFICATION_EMAIL_FROM: enowsinke@gmail.com
+      WATCHTOWER_NOTIFICATION_EMAIL_TO: enowsinke@gmail.com,mathiassinke@gmail.com
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER: smtp.gmail.com
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: 587
     command: --interval 30 --debug
     restart: always
     networks:
@@ -36,9 +43,13 @@ services:
 
   reg:
     image: registry:2
-    container_name: sinke-reg
+    container_name: sinke-registry
     restart: always
     ports:
       - "5000:5000"
     networks:
       sk_network:
+    volumes:
+      - registry_data:/var/lib/registry
+volumes:
+  registry_data: {}
