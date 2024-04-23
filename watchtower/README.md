@@ -10,7 +10,7 @@
    volume (`/root/.docker/config.json`). This lets watchtower to access the credentials stored in the credential helper through the configuration file.
 4. Login in the terminal
    ```dockerfile
-   docker login localhost:5000 -u admin  --password-stdin adminsk-registry
+   docker login sinke-registry:5000 -u admin  --password-stdin adminsk-registry
    ```
 ## Setup
 The defined network named sk_network is helpful as other services needs to communicate with the registry and watchtower.
